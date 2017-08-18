@@ -15,14 +15,14 @@ def read_data(file_path):
     column_names = ['user-id','activity','timestamp', 'x-axis', 'y-axis', 'z-axis']
     data = pd.read_csv(file_path,header = None, names = column_names, comment=';')
     data = data.dropna(axis=0, how='any')
-    #data = data[1:240000] #Reduce the data size to check accuracy
+    data = data[1:240000] #Reduce the data size to check accuracy
     return data
 
 def feature_normalize(dataset):
     mu = np.mean(dataset,axis = 0)
     sigma = np.std(dataset,axis = 0)
     return (dataset - mu)/sigma
-    
+
 def plot_axis(ax, x, y, title):
     ax.plot(x, y)
     ax.set_title(title)
@@ -30,7 +30,7 @@ def plot_axis(ax, x, y, title):
     ax.set_ylim([min(y) - np.std(y), max(y) + np.std(y)])
     ax.set_xlim([min(x), max(x)])
     ax.grid(True)
-    
+
 def plot_activity(activity,data):
     fig, (ax0, ax1, ax2) = plt.subplots(nrows = 3, figsize = (15, 10), sharex = True)
     plot_axis(ax0, data['timestamp'], data['x-axis'], 'x-axis')
@@ -40,7 +40,7 @@ def plot_activity(activity,data):
     fig.suptitle(activity)
     plt.subplots_adjust(top=0.90)
     plt.show()
-    
+
 def windows(data, size):
     start = 0
     while start < data.count():
@@ -74,9 +74,9 @@ def apply_depthwise_conv(x,kernel_size,num_channels,depth):
     weights = weight_variable([1, kernel_size, num_channels, depth])
     biases = bias_variable([depth * num_channels])
     return tf.nn.relu(tf.add(depthwise_conv2d(x, weights),biases))
-    
+
 def apply_max_pool(x,kernel_size,stride_size):
-    return tf.nn.max_pool(x, ksize=[1, 1, kernel_size, 1], 
+    return tf.nn.max_pool(x, ksize=[1, 1, kernel_size, 1],
                           strides=[1, 1, stride_size, 1], padding='VALID')
 
 
@@ -167,7 +167,7 @@ cost_history = np.empty(shape=[1],dtype=float)
 with tf.Session() as session:
     tf.initialize_all_variables().run()
     for epoch in range(training_epochs):
-        for b in range(total_batches):    
+        for b in range(total_batches):
             offset = (b * batch_size) % (train_y.shape[0] - batch_size)
             batch_x = train_x[offset:(offset + batch_size), :, :, :]
             batch_y = train_y[offset:(offset + batch_size), :]
@@ -175,6 +175,6 @@ with tf.Session() as session:
             cost_history = np.append(cost_history,c)
         print("Epoch: ",epoch," Training Loss: ",c," Training Accuracy: ",
               session.run(accuracy, feed_dict={X: train_x, Y: train_y}))
-    
+
     print("Testing Accuracy:", session.run(accuracy, feed_dict={X: test_x, Y: test_y}))
 
