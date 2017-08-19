@@ -4,7 +4,7 @@ Dataset used is included in the repo (using git lfs).
 Original: [Actitracker](http://www.cis.fordham.edu/wisdm/dataset.php).
 
 Python libraries used:
-1) Tensorflow
+1) TensorFlow
 2) Pandas
 3) Numpy
 4) Scipy
